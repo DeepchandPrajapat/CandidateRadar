@@ -13,4 +13,7 @@ chroma_db/
 .idea/
 
 inputs/
-outputs/
+outputs2/
+
+src/rag/check.py
+src/rag/TEST.PY

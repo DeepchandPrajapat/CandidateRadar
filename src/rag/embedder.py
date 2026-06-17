@@ -1,7 +1,6 @@
 import os
 import json
-import uuid
-import chromadb
+from chromadb import PersistentClient
 from sentence_transformers import SentenceTransformer
 
 # ── paths 
@@ -15,7 +14,7 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 print("✅ Embedding model loaded")
 
 # ── init ChromaDB persistent client 
-chroma_client     = chromadb.PersistentClient(path=CHROMA_DIR)
+chroma_client     = PersistentClient(path=CHROMA_DIR)
 resume_collection = chroma_client.get_or_create_collection(
     name="resumes",
     metadata={"hnsw:space": "cosine"}   # cosine similarity
@@ -75,7 +74,7 @@ def index_single_resume(json_path: str) -> bool:
     candidate_id = json_filename.replace(".json", "")
 
     # check if already indexed
-    existing = resume_collection.get(where={"candidate_id": candidate_id})
+    existing = resume_collection.get(ids=[candidate_id])
     if existing and existing["ids"]:
         print(f"⏭️  Already indexed: {json_filename}")
         return False

@@ -32,7 +32,7 @@ def main(filename):
             raise ValueError(f"IBM returned error: {parsed_json['Error']}")
 
         # ✅ Save valid output
-        save_path = "D:/resumeappolo/outputs/json_outputs2/parn.json"
+        save_path = "D:/CandidateRadar/outputs2/abhi.json"
         with open(save_path, "w", encoding="utf-8") as f:
             json.dump(parsed_json, f, indent=4, ensure_ascii=False)
 
@@ -43,4 +43,4 @@ def main(filename):
 
 # --- Main Program Logic ---
 if __name__ == "__main__":
-    main("D:/resumeappolo/inputs/resume2/Naukri_PraneshCH[8y_0m].docx")
+    main(r"D:\CandidateRadar\inputs\resume\Abhishek Tyagi [4y_4m] - MERN Dev - Bangalore.pdf")
