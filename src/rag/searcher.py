@@ -4,7 +4,8 @@ import psycopg2
 from google import genai
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
-from query_parser import parse_query
+from src.rag.query_parser import parse_query
+from src.rag.embedder import embedding_model
 
 load_dotenv()
 
@@ -13,9 +14,7 @@ client         = genai.Client(api_key=GEMINI_API_KEY)
 
 DB_URL = os.getenv("SUPABASE_DB_URL")
 
-print("⏳ Loading embedding model...")
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-print("✅ Embedding model loaded")
+
 
 
 def get_connection():
@@ -151,19 +150,16 @@ Job Requirement: "{original_query}"
 Candidates:
 {json.dumps(candidate_summaries, indent=2)}
 
-Rank ALL candidates from best to worst fit. For each candidate provide:
-1. Rank number
-2. Name
-3. Why they are a good fit (be specific — mention relevant skills, experience, projects)
-4. Any concerns or gaps
-5. Estimated years of experience in the specific skills mentioned in the requirement
+Rank ALL candidates from best to worst fit.
+Be specific but concise — 2-3 sentences max per field.
 
-Return your response in this format for each candidate:
+Return EXACTLY in this format:
 
 Rank #X — [Name]
-Fit: [specific reasons why they match]
-Concerns: [any gaps or mismatches]
-Skill-specific experience: [estimate based on their employment history]
+Why this rank: [1-2 sentences explaining why ranked here vs others]
+Fit: [specific matching skills and experience, 1 sentence]
+Concerns: [main gap, 1 sentence]
+Experience: [X years in specific skill mentioned]
 ---
 """
 
