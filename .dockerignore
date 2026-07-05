@@ -1,0 +1,25 @@
+# environment
+.env
+venv/
+myenv310/
+__pycache__/
+*.pyc
+*.pyo
+
+# local data — not needed in production
+inputs/
+outputs2/
+chroma_db/
+
+# test and debug files
+test_*.py
+check.py
+batch_parse.py
+vb.py
+
+# git
+.git
+.gitignore
+
+# docs
+README.md

@@ -5,23 +5,47 @@ import sys
 def convert_docx_to_pdf(docx_path):
     """Convert DOCX to PDF without requiring Microsoft Word."""
     pdf_path = docx_path.replace(".docx", ".converted.pdf")
-    
+    output_dir = os.path.dirname(docx_path) or "."
+
     try:
-        # Method 1: try docx2pdf (works if Word is not busy)
-        from docx2pdf import convert as docx_to_pdf
-        docx_to_pdf(docx_path, os.path.dirname(docx_path))
-        original_pdf_path = docx_path.replace(".docx", ".pdf")
+        # Method 1: LibreOffice headless (works on Linux/Render, no Word needed)
+        result = subprocess.run(
+            [
+                "soffice",
+                "--headless",
+                "--convert-to", "pdf",
+                "--outdir", output_dir,
+                docx_path,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"LibreOffice conversion failed: {result.stderr}")
+
+        # LibreOffice names the output <original_name>.pdf
+        original_pdf_path = os.path.join(
+            output_dir,
+            os.path.splitext(os.path.basename(docx_path))[0] + ".pdf"
+        )
+
         if os.path.exists(original_pdf_path):
             if os.path.exists(pdf_path):
                 os.remove(pdf_path)  # remove old .converted.pdf if exists
             os.rename(original_pdf_path, pdf_path)
+            print(f"✅ Converted using LibreOffice: {pdf_path}")
             return pdf_path
-            
+        else:
+            raise RuntimeError("LibreOffice did not produce expected output file")
+
     except Exception as e:
-        print(f"⚠️ docx2pdf failed: {e}, trying fallback...")
+        print(f"⚠️ LibreOffice conversion failed: {e}, trying fallback...")
 
     try:
-        # Method 2: python-docx + reportlab (no Word needed)
+        # Method 2: python-docx + reportlab (plain text only, no formatting —
+        # last resort if LibreOffice is unavailable or fails)
         from docx import Document
         from reportlab.lib.pagesizes import A4
         from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
