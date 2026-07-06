@@ -1,7 +1,7 @@
 import os
 import hashlib
 import tempfile
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException,Depends,Header
 from typing import List
 from supabase import create_client
 from dotenv import load_dotenv
@@ -15,11 +15,17 @@ load_dotenv()
 
 SUPABASE_URL    = os.getenv("SUPABASE_URL")
 SUPABASE_KEY    = os.getenv("SUPABASE_KEY")
+API_KEY = os.getenv("API_KEY")
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 MAX_UPLOAD_LIMIT = 5
 
 router = APIRouter()
+
+
+def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API key")
 
 
 def compute_hash(file_bytes: bytes) -> str:
@@ -68,8 +74,8 @@ def parse_resume_text(file_bytes: bytes, filename: str) -> str:
 
 
 @router.post("/upload")
-async def upload_resumes(files: List[UploadFile] = File(default=...)):
-
+async def upload_resumes(files: List[UploadFile] = File(...),api_key: str = Depends(verify_api_key)):
+    
     """
     Upload up to 5 resume files (PDF or DOCX).
     Each file is:
