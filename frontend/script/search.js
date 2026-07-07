@@ -1,5 +1,5 @@
 
-  const API_BASE = "https://candidateradar.onrender.com;
+  const API_BASE = "https://candidateradar.onrender.com";
 
   function setQuery(q) {
     document.getElementById("search-input").value = q;
