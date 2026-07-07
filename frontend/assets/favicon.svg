@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="64"
+     height="64"
+     viewBox="0 0 30 30"
+     fill="none">
+
+    <circle cx="15" cy="15" r="13" fill="#E8551E" fill-opacity="0.15"/>
+    <circle cx="15" cy="15" r="10" fill="#E8551E" fill-opacity="0.3"/>
+    <circle cx="15" cy="15" r="7" fill="#E8551E" fill-opacity="0.5"/>
+    <circle cx="15" cy="15" r="4" fill="#E8551E"/>
+
+    <line
+        x1="15"
+        y1="15"
+        x2="23"
+        y2="7"
+        stroke="#241F2E"
+        stroke-width="1.8"
+        stroke-linecap="round"/>
+
+</svg>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CandidateRadar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">    
+<style>
+  body{ background:#EEE7DD; color:#241F2E; font-family:'Inter',sans-serif; position:relative; overflow-x:hidden; }
+  .font-serif{ font-family:'Fraunces',serif; }
+  .font-mono{ font-family:'IBM Plex Mono',monospace; }
+  .bg-doodle{ position:absolute; opacity:0.5; pointer-events:none; }
+  .tag{
+      font-family:'IBM Plex Mono',monospace;
+      font-size:11px;
+      background:#fff;
+      border:1px solid #241F2E;
+      border-radius:999px;
+      padding:4px 11px;
+      position:absolute;
+
+      animation: float 4s ease-in-out infinite;
+  }
+  @keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeInUp 0.6s ease-out forwards; }
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-5px);
+    }
+}
+
+.tag1{ animation-delay:0s; }
+.tag2{ animation-delay:1s; }
+.tag3{ animation-delay:3s; }
+.tag4{ animation-delay:4s; }
+
+@keyframes radarSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.radar-sweep{
+    transform-origin: 15px 15px;
+    animation: radarSpin 8s linear infinite;
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.hero-illustration {
+    animation: breathe 5s ease-in-out infinite;
+}
+
+.reveal{
+    opacity:0;
+    transform:translateY(40px);
+    transition:all .8s ease;
+}
+
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
+}
+</style>
+</head>
+<body>
+
+<svg class="bg-doodle" style="top:120px; left:40px;" width="20" height="20"><path d="M10 0 L10 20 M0 10 L20 10" stroke="#241F2E" stroke-width="1.4"/></svg>
+<svg class="bg-doodle" style="top:600px; left:90px;" width="14" height="14"><circle cx="7" cy="7" r="6" stroke="#E8551E" stroke-width="1.4" fill="none"/></svg>
+<svg class="bg-doodle" style="top:260px; right:60px;" width="18" height="18"><path d="M9 0 L9 18 M0 9 L18 9" stroke="#241F2E" stroke-width="1.2"/></svg>
+<svg class="bg-doodle" style="top:820px; right:120px;" width="16" height="16"><circle cx="8" cy="8" r="7" stroke="#241F2E" stroke-width="1.2" fill="none"/></svg>
+
+<div class="max-w-6xl mx-auto px-10 relative">
+
+  </div>
+
+  <nav class="sticky top-0 z-50 bg-[#EEE7DD]/80 backdrop-blur-xl border-b border-[#241F2E]/20 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+    <div class="max-w-full mx-auto px-16 flex items-center justify-between py-6">
+        <div class="font-serif font-semibold text-3xl flex items-center gap-2.5">
+        <svg width="42" height="42" viewBox="0 0 30 30" fill="none">
+            <circle cx="15" cy="15" r="13" fill="#E8551E" fill-opacity="0.15"/>
+            <circle cx="15" cy="15" r="10" fill="#E8551E" fill-opacity="0.3"/>
+            <circle cx="15" cy="15" r="7" fill="#E8551E" fill-opacity="0.5"/>
+            <circle cx="15" cy="15" r="4" fill="#E8551E"/>
+            <g class="radar-sweep">
+                <line
+                    x1="15"
+                    y1="15"
+                    x2="23"
+                    y2="7"
+                    stroke="#241F2E"
+                    stroke-width="1.8"
+                    stroke-linecap="round"/>
+            </g>
+        </svg>
+        <span class="flex"><span class="text-[#241F2E]">Candidate</span><span class="text-[#E8551E]">Radar</span></span>
+        </div>
+      <div class="flex gap-3 items-center">
+        <a href="#" class="text-sm font-medium text-[#241F2E] px-5 py-2.5 rounded-full border border-[#241F2E] transition-transform duration-200 hover:scale-105">Upload resumes</a>
+        <a href="#" class="text-sm font-medium bg-[#241F2E] text-white px-5 py-2.5 rounded-full transition-transform duration-200 hover:scale-105">Search candidates</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-10 relative">
+
+  <div class="grid grid-cols-2 gap-10 items-center py-16 reveal">
+    <div>
+      <div class="inline-flex items-center gap-2 font-mono text-xs bg-white border border-[#241F2E] rounded-full px-4 py-1.5 mb-7 animate-in"style="animation-delay: 0s;>
+        <span class="w-1.5 h-1.5 rounded-full bg-[#E8551E] inline-block"></span>
+        AI MATCHING ENGINE
+      </div>
+      <h1 class="font-serif font-medium text-6xl leading-[1.05] mb-7 animate-in"style="animation-delay: 0.1s">
+        Find the right<br>candidate.<br><span class="italic font-medium text-[#E8551E]">Seriously fast.</span>
+      </h1>
+      <p class="text-[#5C5468] text-lg max-w-md mb-9 leading-relaxed animate-in"style="animation-delay: 0.3s">
+        CandidateRadar reads every resume in your pipeline and hands you a ranked shortlist — with the reasoning attached.
+      </p>
+      <div class="flex gap-3 items-center">
+        <a href="#" class="bg-[#241F2E] text-white font-medium text-sm px-7 py-4 rounded-full transition-transform duration-200 hover:scale-105">Search candidates</a>
+        <a href="#" class="border border-[#241F2E] font-medium text-sm px-7 py-4 rounded-full transition-transform duration-200 hover:scale-105">Upload resumes</a>
+      </div>
+    </div>
+
+    <div class="relative flex items-center justify-center py-10 hero-illustration">
+      <span class="tag tag1" style="top:20px; left:10px;">python</span>
+      <span class="tag tag2" style="bottom:40px; left:0px;">94% match</span>
+      <span class="tag tag3" style="top:10px; right:20px;">fastapi</span>
+      <span class="tag tag4" style="bottom:10px; right:30px;">4 yrs exp</span>
+      <svg width="380" height="340" viewBox="0 0 380 340" fill="none">
+        <rect x="70" y="40" width="150" height="190" rx="4" stroke="#241F2E" stroke-width="1.6" transform="rotate(-6 145 135)"/>
+        <line x1="95" y1="90" x2="185" y2="80" stroke="#241F2E" stroke-width="1.6" transform="rotate(-6 145 135)"/>
+        <line x1="95" y1="110" x2="185" y2="100" stroke="#241F2E" stroke-width="1.6" transform="rotate(-6 145 135)"/>
+        <line x1="95" y1="130" x2="160" y2="122" stroke="#241F2E" stroke-width="1.6" transform="rotate(-6 145 135)"/>
+        <circle cx="255" cy="190" r="55" stroke="#E8551E" stroke-width="3"/>
+        <line x1="295" y1="230" x2="330" y2="265" stroke="#E8551E" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+ <section class="bg-[#F8F3EB] border border-[#D8CFC2] rounded-3xl py-20 px-12 mt-8 mb-20 shadow-sm reveal">
+    <div class="mb-14 text-center">
+    <h2 class="font-serif font-medium text-5xl mb-3">
+        Start hiring in three steps
+    </h2>
+    <p class="text-[#5C5468] max-w-xl mx-auto text-lg">
+        No setup, no waiting — upload and search the same day.
+    </p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-8 relative">
+      <svg class="absolute top-6 left-0 w-full hidden md:block" height="2" viewBox="0 0 900 2" style="z-index:0;">
+        <line x1="60" y1="1" x2="840" y2="1" stroke="#C9C0B3" stroke-width="1.5" stroke-dasharray="5 6"/>
+      </svg>
+
+      <div class="relative z-10 flex flex-col items-center text-center">
+        <div class="w-12 h-12 rounded-full bg-[#EEE7DD] border-2 border-[#241F2E] flex items-center justify-center font-mono text-sm mb-5">01</div>
+        <h3 class="font-serif font-medium text-xl mb-2 text-center">Upload your resumes</h3>
+        <p class="text-md text-[#5C5468] leading-relaxed">Drop in docx or PDF files — every field gets parsed automatically, no manual tagging.</p>
+      </div>
+
+      <div class="relative z-10 flex flex-col items-center text-center">
+        <div class="w-12 h-12 rounded-full bg-[#EEE7DD] border-2 border-[#241F2E] flex items-center justify-center font-mono text-sm mb-5 text-[#241F2E]">02</div>
+        <h3 class="font-serif font-medium text-xl mb-2">Describe the role</h3>
+        <p class="text-md text-[#5C5468] leading-relaxed">Plain language in, a ranked shortlist out — with the reasoning behind every match.</p>
+      </div>
+
+      <div class="relative z-10 flex flex-col items-center text-center">
+        <div class="w-12 h-12 rounded-full bg-[#EEE7DD] border-2 border-[#241F2E] flex items-center justify-center font-mono text-sm mb-5">03</div>
+        <h3 class="font-serif font-medium text-xl mb-2 text-center">Shortlist your picks</h3>
+        <p class="text-md text-[#5C5468] leading-relaxed">Jump straight to the original resume and move your top candidates forward.</p>
+      </div>
+    </div>
+  </section>
+
+  </div>
+
+  <footer class="bg-[#241F2E] text-[#EEE7DD] mt-16 reveal">
+    <div class="max-w-6xl mx-auto px-10 pt-14 pb-6 grid grid-cols-4 gap-8">
+      <div>
+        <div class="font-serif font-semibold text-xl flex items-center gap-2.5 mb-3">
+          <svg width="42" height="42" viewBox="0 0 30 30" fill="none">
+              <circle cx="15" cy="15" r="13" fill="#E8551E" fill-opacity="0.15"/>
+              <circle cx="15" cy="15" r="10" fill="#E8551E" fill-opacity="0.3"/>
+              <circle cx="15" cy="15" r="7" fill="#E8551E" fill-opacity="0.5"/>
+              <circle cx="15" cy="15" r="4" fill="#E8551E"/>
+              <g class="radar-sweep">
+                  <line
+                      x1="15"
+                      y1="15"
+                      x2="23"
+                      y2="7"
+                      stroke="#EEE7DD"
+                      stroke-width="1.8"
+                      stroke-linecap="round"/>
+              </g>
+          </svg>
+          <span class="flex"><span>Candidate</span><span class="text-[#E8551E]">Radar</span></span>
+        </div>
+        <p class="text-md text-[#B8AFC2] max-w-[220px]">AI-powered resume search, built to find the right and correct candidate fast.</p>
+      </div>
+      <div>
+        <div class="font-mono text-sm text-[#B8AFC2] mb-4 tracking-wide">PRODUCT</div>
+        <div class="flex flex-col gap-2.5 text-md">
+          <a href="upload.html" class="hover:text-[#E8551E]">Upload resumes</a>
+          <a href="search.html" class="hover:text-[#E8551E]">Search candidates</a>
+        </div>
+      </div>
+      <div>
+        <div class="font-mono text-sm text-[#B8AFC2] mb-4 tracking-wide">PROJECT</div>
+        <div class="flex flex-col gap-2.5 text-md">
+          <a href="https://github.com/DeepchandPrajapat/CandidateRadar" class="hover:text-[#E8551E]">GitHub repo</a>
+          <a href="https://candidateradar.onrender.com/docs" class="hover:text-[#E8551E]">API docs</a>
+        </div>
+      </div>
+<div class="flex flex-col items-center text-center">
+    <div class="font-mono text-sm text-[#B8AFC2] tracking-wide mb-5">
+        DEVELOPER
+    </div>
+
+    <!-- Avatar -->
+    <div class="w-20 h-20 rounded-full bg-[#3A3448] flex items-center justify-center text-2xl font-serif font-semibold text-[#EEE7DD] mb-4">
+        DP
+    </div>
+
+    <!-- Name -->
+    <h4 class="font-serif text-xl font-medium text-[#EEE7DD]">
+        Deepchand Prajapat
+    </h4>
+
+    <!-- Title -->
+    <p class="text-sm text-[#B8AFC2] mt-1">
+        Python &amp; AI/ML Developer
+    </p>
+
+    <!-- Socials -->
+    <div class="flex items-center gap-3 mt-4">
+        <a
+            href="mailto:modifive00@gmail.com"
+            class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E8551E] transition"
+        >
+            <i class="fa-solid fa-envelope text-white text-sm"></i>
+        </a>
+
+        <a
+            href="https://www.linkedin.com/in/deepchand-prajapat/"
+            target="_blank"
+            class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E8551E] transition"
+        >
+            <i class="fa-brands fa-linkedin-in text-white text-sm"></i>
+        </a>
+
+        <a
+            href="https://github.com/DeepchandPrajapat"
+            target="_blank"
+            class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#E8551E] transition"
+        >
+            <i class="fa-brands fa-github text-white text-sm"></i>
+        </a>
+    </div>
+</div> <!-- End Developer -->
+
+</div> <!-- End Grid -->
+
+<div class="border-t border-[#3A3448] py-5">
+    <div class="max-w-6xl mx-auto px-10 flex justify-center text-xs text-[#B8AFC2] font-mono">
+        <span>CANDIDATERADAR © 2026</span>
+    </div>
+    </div>
+  </footer>
+  <script>
+const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("active");
+        }
+    });
+},{
+    threshold:0.15
+});
+
+document.querySelectorAll(".reveal").forEach(el=>{
+    observer.observe(el);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Upload Resumes — CandidateRadar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<style>
+  body { background:#EEE7DD; color:#241F2E; font-family:'Inter',sans-serif; overflow-x:hidden; }
+  .font-serif { font-family:'Fraunces',serif; }
+  .font-mono { font-family:'IBM Plex Mono',monospace; }
+  .bg-doodle { position:absolute; opacity:0.5; pointer-events:none; }
+
+  @keyframes radarSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .radar-sweep { transform-origin: 15px 15px; animation: radarSpin 8s linear infinite; }
+
+  @keyframes fadeInUp {
+    from { opacity:0; transform:translateY(16px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  .animate-in { animation: fadeInUp 0.5s ease-out forwards; }
+
+  /* drop zone */
+  #drop-zone {
+    border: 1.5px dashed #241F2E;
+    border-radius: 20px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  #drop-zone.dragover {
+    background: #F8F3EB;
+    border-color: #E8551E;
+  }
+
+  /* file pill */
+  .file-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #F8F3EB;
+    border: 1px solid #D8CFC2;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .file-pill .remove-btn {
+    cursor: pointer;
+    color: #5C5468;
+    transition: color 0.15s;
+  }
+  .file-pill .remove-btn:hover { color: #E8551E; }
+
+  /* result cards */
+  .result-card {
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .result-success { background: #EAF4EC; border: 1px solid #C3DFC8; color: #1E5C2A; }
+  .result-duplicate { background: #FFF8E6; border: 1px solid #F0DFA0; color: #7A5A00; }
+  .result-failed { background: #FDECEA; border: 1px solid #F5C3C0; color: #7A1A16; }
+</style>
+</head>
+<body>
+
+<svg class="bg-doodle" style="top:120px; left:40px;" width="20" height="20"><path d="M10 0 L10 20 M0 10 L20 10" stroke="#241F2E" stroke-width="1.4"/></svg>
+<svg class="bg-doodle" style="top:400px; left:90px;" width="14" height="14"><circle cx="7" cy="7" r="6" stroke="#E8551E" stroke-width="1.4" fill="none"/></svg>
+<svg class="bg-doodle" style="top:260px; right:60px;" width="18" height="18"><path d="M9 0 L9 18 M0 9 L18 9" stroke="#241F2E" stroke-width="1.2"/></svg>
+
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-[#EEE7DD]/80 backdrop-blur-xl border-b border-[#241F2E]/20 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+  <div class="max-w-full mx-auto px-16 flex items-center justify-between py-6">
+    <a href="index.html" class="font-serif font-semibold text-3xl flex items-center gap-2.5">
+      <svg width="42" height="42" viewBox="0 0 30 30" fill="none">
+        <circle cx="15" cy="15" r="13" fill="#E8551E" fill-opacity="0.15"/>
+        <circle cx="15" cy="15" r="10" fill="#E8551E" fill-opacity="0.3"/>
+        <circle cx="15" cy="15" r="7" fill="#E8551E" fill-opacity="0.5"/>
+        <circle cx="15" cy="15" r="4" fill="#E8551E"/>
+        <g class="radar-sweep">
+          <line x1="15" y1="15" x2="23" y2="7" stroke="#241F2E" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <span class="flex"><span class="text-[#241F2E]">Candidate</span><span class="text-[#E8551E]">Radar</span></span>
+    </a>
+    <div class="flex gap-3 items-center">
+      <a href="upload.html" class="text-sm font-medium bg-[#241F2E] text-white px-5 py-2.5 rounded-full transition-transform duration-200 hover:scale-105">Upload resumes</a>
+      <a href="search.html" class="text-sm font-medium text-[#241F2E] px-5 py-2.5 rounded-full border border-[#241F2E] transition-transform duration-200 hover:scale-105">Search candidates</a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="max-w-2xl mx-auto px-6 py-16">
+
+  <!-- header -->
+  <div class="mb-10 animate-in">
+    <div class="inline-flex items-center gap-2 font-mono text-xs bg-white border border-[#241F2E] rounded-full px-4 py-1.5 mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-[#E8551E] inline-block"></span>
+      RESUME INGESTION
+    </div>
+    <h1 class="font-serif font-medium text-5xl leading-tight mb-4">
+      Upload resumes.<br><span class="italic text-[#E8551E]">Let AI do the rest.</span>
+    </h1>
+    <p class="text-[#5C5468] text-lg leading-relaxed">
+      Drop in up to 5 PDF or DOCX files. Each resume is parsed, embedded, and indexed — ready to search in seconds.
+    </p>
+  </div>
+
+  <!-- drop zone -->
+  <div id="drop-zone" class="bg-[#F8F3EB] p-10 text-center cursor-pointer mb-6 animate-in" style="animation-delay:0.1s"
+       onclick="document.getElementById('file-input').click()"
+       ondragover="handleDragOver(event)"
+       ondragleave="handleDragLeave(event)"
+       ondrop="handleDrop(event)">
+    <input type="file" id="file-input" multiple accept=".pdf,.docx" class="hidden" onchange="handleFileSelect(event)">
+    <div class="w-14 h-14 rounded-full bg-[#EEE7DD] border border-[#241F2E]/20 flex items-center justify-center mx-auto mb-4">
+      <i class="fa-solid fa-arrow-up-from-bracket text-[#241F2E] text-lg"></i>
+    </div>
+    <p class="font-mono text-sm text-[#241F2E] mb-1">Drop files here or click to browse</p>
+    <p class="font-mono text-xs text-[#5C5468]">PDF, DOCX &nbsp;·&nbsp; max 5 files</p>
+  </div>
+
+  <!-- selected files list -->
+  <div id="file-list" class="flex flex-col gap-2 mb-6"></div>
+
+  <!-- limit warning -->
+  <div id="limit-warning" class="hidden font-mono text-xs text-[#E8551E] mb-4">
+    Maximum 5 files allowed. Extra files were removed.
+  </div>
+
+  <!-- upload button -->
+  <button id="upload-btn" onclick="uploadFiles()"
+    class="w-full bg-[#241F2E] text-white font-medium text-sm py-4 rounded-full transition-transform duration-200 hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+    disabled>
+    Upload resumes
+  </button>
+
+  <!-- results -->
+  <div id="results" class="mt-8 flex flex-col gap-3"></div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-[#241F2E] text-[#EEE7DD] mt-16">
+  <div class="max-w-6xl mx-auto px-10 pt-10 pb-6 flex items-center justify-between">
+    <div class="font-serif font-semibold text-xl flex items-center gap-2.5">
+      <svg width="32" height="32" viewBox="0 0 30 30" fill="none">
+        <circle cx="15" cy="15" r="13" fill="#E8551E" fill-opacity="0.15"/>
+        <circle cx="15" cy="15" r="10" fill="#E8551E" fill-opacity="0.3"/>
+        <circle cx="15" cy="15" r="7" fill="#E8551E" fill-opacity="0.5"/>
+        <circle cx="15" cy="15" r="4" fill="#E8551E"/>
+        <g class="radar-sweep">
+          <line x1="15" y1="15" x2="23" y2="7" stroke="#EEE7DD" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <span class="flex"><span>Candidate</span><span class="text-[#E8551E]">Radar</span></span>
+    </div>
+    <span class="font-mono text-xs text-[#B8AFC2]">CANDIDATERADAR © 2026</span>
+  </div>
+</footer>
+
+<script src="js/upload.js"></script>
+</body>
+</html>
