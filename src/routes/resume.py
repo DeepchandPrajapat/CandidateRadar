@@ -32,14 +32,24 @@ def compute_hash(file_bytes: bytes) -> str:
     return hashlib.md5(file_bytes).hexdigest()
 
 
+def get_content_type(filename: str) -> str:
+    ext = get_file_extension(filename).lower()
+    mime_map = {
+        ".pdf": "application/pdf",
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    }
+    return mime_map.get(ext, "application/octet-stream")
+
+
 def upload_to_storage(file_bytes: bytes, filename: str) -> str:
     """Upload original resume file to Supabase Storage, return public URL."""
     path = f"resumes/{filename}"
+    content_type = get_content_type(filename)
 
     supabase_client.storage.from_("resumes").upload(
         path=path,
         file=file_bytes,
-        file_options={"content-type": "application/octet-stream", "upsert": "true"}
+        file_options={"content-type": content_type, "upsert": "true"}
     )
 
     url_response = supabase_client.storage.from_("resumes").get_public_url(path)
