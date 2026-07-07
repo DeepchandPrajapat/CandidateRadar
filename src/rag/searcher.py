@@ -6,7 +6,7 @@ from google.genai import types
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from src.rag.query_parser import parse_query
-from src.rag.embedder import embedding_model
+from src.rag.embedder import get_embedding_model
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
     semantic similarity, using pgvector.
     """
     semantic_query = parsed_query.get("semantic_query", "")
-    query_vector   = embedding_model.encode(semantic_query).tolist()
+    query_vector = get_embedding_model().encode(semantic_query).tolist()
 
     skills          = parsed_query.get("skills", [])
     min_experience  = parsed_query.get("min_experience", None)

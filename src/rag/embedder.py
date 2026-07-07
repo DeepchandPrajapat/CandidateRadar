@@ -16,9 +16,16 @@ def get_connection():
     return psycopg2.connect(DB_URL)
 
 
-print("⏳ Loading embedding model...")
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-print("✅ Embedding model loaded")
+_embedding_model = None
+
+
+def get_embedding_model():
+    global _embedding_model
+    if _embedding_model is None:
+        print("⏳ Loading embedding model...")
+        _embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("✅ Embedding model loaded")
+    return _embedding_model
 
 
 def get_file_hash(file_path: str) -> str:
@@ -104,7 +111,7 @@ def index_single_resume(resume: dict, file_hash: str, resume_file_url: str = Non
             return None
 
         embedding_text = build_embedding_text(resume)
-        vector = embedding_model.encode(embedding_text).tolist()
+        vector = get_embedding_model().encode(embedding_text).tolist()
 
         name             = resume.get("Name", "Unknown")
         email            = resume.get("Contact Information", {}).get("Email", "Not mentioned")
