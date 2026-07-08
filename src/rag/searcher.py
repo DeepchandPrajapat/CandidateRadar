@@ -24,19 +24,12 @@ def get_connection():
 
 # ── Step 1: Single SQL query — filter + semantic search together ──────────────
 
-def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
-    """
-    One SQL query that filters by structured fields AND ranks by
-    semantic similarity, using pgvector.
-    """
+def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
     semantic_query = parsed_query.get("semantic_query", "")
     query_vector = get_embedding_model().encode(semantic_query).tolist()
 
-        # DEBUG — add these lines
     print(f"DEBUG: semantic_query = {semantic_query}")
     print(f"DEBUG: vector length = {len(query_vector)}")
-    print(f"DEBUG: vector sample = {query_vector[:3]}")
-    print(f"DEBUG: DB_URL = {DB_URL[:30]}...")
 
     skills          = parsed_query.get("skills", [])
     min_experience  = parsed_query.get("min_experience", None)
@@ -63,7 +56,6 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
         params["employer"] = f"%{recent_employer}%"
 
     where_clause = ("WHERE " + " AND ".join(conditions)) if conditions else ""
-
     params["query_vector"] = json.dumps(query_vector)
     params["limit"]        = top_n
 
@@ -83,16 +75,18 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
     cur  = conn.cursor()
 
     try:
+        # DEBUG
+        cur.execute("SELECT COUNT(*) FROM candidates")
+        count = cur.fetchone()[0]
+        print(f"DEBUG: total candidates in DB = {count}")
+        print(f"DEBUG: where_clause = '{where_clause}'")
+
         cur.execute(sql, params)
+        rows = cur.fetchall()
+        print(f"DEBUG: rows fetched = {len(rows)}")
+
         columns = [desc[0] for desc in cur.description]
-        rows    = cur.fetchall()
-
         results = [dict(zip(columns, row)) for row in rows]
-
-        print(f"\n🔍 Found {len(results)} candidates:")
-        for r in results:
-            print(f"   {r['name']} (similarity: {round(r['similarity'], 3)})")
-
         return results
 
     except Exception as e:
@@ -102,7 +96,6 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
     finally:
         cur.close()
         conn.close()
-
 
 # ── Step 2: Rank with Gemini — returns structured JSON, not free text ─────────
 
