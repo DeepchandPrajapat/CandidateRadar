@@ -58,7 +58,7 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
 
     where_clause = ("WHERE " + " AND ".join(conditions)) if conditions else ""
 
-    params["query_vector"] = query_vector
+    params["query_vector"] = str(query_vector)
     params["limit"]        = top_n
 
     sql = f"""
