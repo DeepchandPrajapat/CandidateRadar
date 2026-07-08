@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from src.rag.query_parser import parse_query
 from src.rag.embedder import get_embedding_model
-
+from psycopg2.extras import register_default_jsonb
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -56,7 +56,7 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
         params["employer"] = f"%{recent_employer}%"
 
     where_clause = ("WHERE " + " AND ".join(conditions)) if conditions else ""
-    params["query_vector"] = json.dumps(query_vector)
+    params["query_vector"] = "[" + ",".join(map(str, query_vector)) + "]"
     params["limit"]        = top_n
 
     sql = f"""
