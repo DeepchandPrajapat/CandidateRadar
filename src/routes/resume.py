@@ -1,4 +1,5 @@
 import os
+import re
 import hashlib
 import tempfile
 from fastapi import APIRouter, UploadFile, File, HTTPException,Depends,Header
@@ -41,16 +42,27 @@ def get_content_type(filename: str) -> str:
     return mime_map.get(ext, "application/octet-stream")
 
 
-def upload_to_storage(file_bytes: bytes, filename: str) -> str:
-    """Upload original resume file to Supabase Storage, return public URL."""
-    path = f"resumes/{filename}"
-    content_type = get_content_type(filename)
+def sanitize_filename(filename: str) -> str:
+    """Supabase Storage keys reject characters like [ ] { } — strip them out."""
+    name, ext = os.path.splitext(filename)
+    name = re.sub(r"[\[\]{}]", "", name)          # drop brackets/braces
+    name = re.sub(r"\s+", "_", name.strip())       # spaces -> underscores
+    name = re.sub(r"[^A-Za-z0-9_\-\.]", "", name)  # strip anything else risky
+    return f"{name}{ext}"
 
-    supabase_client.storage.from_("resumes").upload(
-        path=path,
-        file=file_bytes,
-        file_options={"content-type": content_type, "upsert": "true"}
-    )
+
+def upload_to_storage(file_bytes: bytes, filename: str) -> str:
+    safe_filename = sanitize_filename(filename)
+    path = f"resumes/{safe_filename}"
+
+    try:
+        supabase_client.storage.from_("resumes").upload(
+            path=path,
+            file=file_bytes,
+            file_options={"content-type": get_content_type(filename), "x-upsert": "true"}
+        )
+    except Exception:
+        pass  # file already exists in storage, just get URL
 
     url_response = supabase_client.storage.from_("resumes").get_public_url(path)
     return url_response

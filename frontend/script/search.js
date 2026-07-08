@@ -52,9 +52,7 @@ function buildCard(candidate, index) {
       <div class="rank-badge ${rank === 1 ? "rank-1" : ""}">0${rank}</div>
       <div class="flex-1">
         <h3 class="font-serif font-medium text-xl">${name}</h3>
-        <span class="font-mono text-xs text-[#5C5468]">
-          Candidate ID: ${candidate.id}${experience ? ` &middot; ${experience}` : ""}
-        </span>
+      ${experience ? `<span class="font-mono text-xs text-[#5C5468]">${experience}</span>` : ""}
       </div>
     </div>
 
