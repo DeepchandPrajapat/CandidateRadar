@@ -32,6 +32,12 @@ def search_candidates(parsed_query: dict, top_n: int = 10) -> list[dict]:
     semantic_query = parsed_query.get("semantic_query", "")
     query_vector = get_embedding_model().encode(semantic_query).tolist()
 
+        # DEBUG — add these lines
+    print(f"DEBUG: semantic_query = {semantic_query}")
+    print(f"DEBUG: vector length = {len(query_vector)}")
+    print(f"DEBUG: vector sample = {query_vector[:3]}")
+    print(f"DEBUG: DB_URL = {DB_URL[:30]}...")
+
     skills          = parsed_query.get("skills", [])
     min_experience  = parsed_query.get("min_experience", None)
     location        = parsed_query.get("location", None)
