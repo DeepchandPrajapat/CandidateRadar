@@ -2,4 +2,8 @@
   functions = "netlify/functions"
 
 [functions]
+  node_bundler = "esbuild"
+
+[[functions]]
+  path = "/.netlify/functions/proxy"
   timeout = 60
