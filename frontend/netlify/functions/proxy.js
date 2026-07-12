@@ -4,7 +4,6 @@ exports.config = {
 
 exports.handler = async (event) => {
 
-    // only allow POST requests
     if (event.httpMethod !== "POST") {
         return {
             statusCode: 405,
@@ -16,7 +15,6 @@ exports.handler = async (event) => {
         const API_BASE = process.env.API_BASE;
         const API_KEY  = process.env.API_KEY;
 
-        // forward the request to Render with the secret API key
         const response = await fetch(`${API_BASE}/resume/upload`, {
             method : "POST",
             headers: {
@@ -26,13 +24,24 @@ exports.handler = async (event) => {
             body: Buffer.from(event.body, event.isBase64Encoded ? "base64" : "utf8")
         });
 
-        const data = await response.json();
+        const responseText = await response.text();
+        console.log("Render status:", response.status);
+        console.log("Render body:", responseText.substring(0, 200));
 
-        return {
-            statusCode: response.status,
-            headers   : { "Content-Type": "application/json" },
-            body      : JSON.stringify(data)
-        };
+        try {
+            const data = JSON.parse(responseText);
+            return {
+                statusCode: response.status,
+                headers   : { "Content-Type": "application/json" },
+                body      : JSON.stringify(data)
+            };
+        } catch {
+            return {
+                statusCode: 500,
+                headers   : { "Content-Type": "application/json" },
+                body      : JSON.stringify({ error: "Render returned non-JSON", raw: responseText.substring(0, 200) })
+            };
+        }
 
     } catch (err) {
         return {
