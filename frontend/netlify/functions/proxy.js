@@ -1,3 +1,7 @@
+exports.config = {
+  timeout: 60
+};
+
 exports.handler = async (event) => {
 
     // only allow POST requests
