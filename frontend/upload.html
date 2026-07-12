@@ -170,5 +170,9 @@
 </footer>
 
 <script src="script/upload.js"></script>
+<script>
+  // wake up Render on page load
+  fetch("https://your-render-url.onrender.com/").catch(() => {});
+</script>
 </body>
 </html>
