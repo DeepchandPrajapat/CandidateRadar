@@ -4,9 +4,14 @@ import json
 import hashlib
 import psycopg2
 from dotenv import load_dotenv
+from huggingface_hub import login
 from sentence_transformers import SentenceTransformer
 
 load_dotenv()
+
+hf_token = os.getenv("HF_TOKEN")
+if hf_token:
+    login(token=hf_token)
 
 DB_URL = os.getenv("SUPABASE_DB_URL")
 print(repr(DB_URL))
