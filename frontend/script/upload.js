@@ -59,7 +59,7 @@ async function uploadFiles() {
     // calls Netlify proxy — API key is hidden server-side
     const res = await fetch(`https://candidateradar.onrender.com/resume/upload`, {
         method: "POST",
-        headers: { "x-api-key": "your_api_key_here" },
+        headers: { "x-api-key": "candidateradar_secret_2026" },
         body  : formData,
     });
     const data = await res.json();
