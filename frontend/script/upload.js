@@ -57,9 +57,10 @@ async function uploadFiles() {
 
   try {
     // calls Netlify proxy — API key is hidden server-side
-    const res  = await fetch(`/.netlify/functions/proxy`, {
-      method: "POST",
-      body  : formData,
+    const res = await fetch(`https://your-actual-render-url.onrender.com/resume/upload`, {
+        method: "POST",
+        headers: { "x-api-key": "your_api_key_here" },
+        body  : formData,
     });
     const data = await res.json();
 
