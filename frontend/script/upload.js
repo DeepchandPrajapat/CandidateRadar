@@ -57,11 +57,13 @@ async function uploadFiles() {
 
   try {
     // calls Netlify proxy — API key is hidden server-side
-    const res  = await fetch(`/.netlify/functions/proxy`, {
-      method: "POST",
-      body  : formData,
+    const res = await fetch(`http://localhost:8000/resume/upload`, {
+        method: "POST",
+        headers: { "x-api-key": "candidateradar_secret_2026" },
+        body  : formData,
     });
     const data = await res.json();
+    console.log(data);
 
     data.details.forEach(d => {
       const card = document.createElement("div");
