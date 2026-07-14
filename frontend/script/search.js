@@ -1,4 +1,4 @@
-const API_BASE = "https://candidateradar.onrender.com";
+const API_BASE = "http://127.0.0.1:8000";
 
 function setQuery(q) {
   document.getElementById("search-input").value = q;
