@@ -51,10 +51,10 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
     conditions = []
     params = {}
 
-    # Skill filter – optional, uncomment to enable
-    # if skills:
-    #     conditions.append("skills && %(skills)s")
-    #     params["skills"] = skills
+
+    if skills:
+        conditions.append("skills && %(skills)s")
+        params["skills"] = skills
 
     if min_experience is not None:
         conditions.append("experience_years >= %(min_exp)s")
