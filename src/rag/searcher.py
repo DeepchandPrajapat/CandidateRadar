@@ -32,15 +32,8 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
     semantic_query = parsed_query.get("semantic_query", "")
     query_vector = get_embedding_model().encode(semantic_query).tolist()
 
-    # Debug: basic vector properties
-    print(f"DEBUG: vector dims = {len(query_vector)}")
-    print(f"DEBUG: has nan = {any(np.isnan(x) for x in query_vector)}")
-    print(f"DEBUG: has inf = {any(np.isinf(x) for x in query_vector)}")
-    print(f"DEBUG: vector norm = {np.linalg.norm(query_vector)}")
-
-    # Build vector string for SQL literal
+    # Build vector string for direct SQL literal (no parameter)
     vector_str = "[" + ",".join(str(x) for x in query_vector) + "]"
-    
 
     # Extract filters from parsed query
     skills = parsed_query.get("skills", [])
@@ -50,7 +43,6 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
 
     conditions = []
     params = {}
-
 
     if skills:
         conditions.append("skills && %(skills)s")
@@ -70,6 +62,7 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
 
     where_clause = ("WHERE " + " AND ".join(conditions)) if conditions else ""
 
+    # Direct interpolation of the vector – no parameter to avoid pgvector casting issues
     sql = f"""
         SELECT
             id, name, email, phone, recent_employer,
@@ -81,22 +74,13 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
         ORDER BY embedding <=> '{vector_str}'::vector
         LIMIT {top_n}
     """
-    print(f"DEBUG: FULL SQL >>> {sql}")
+
     conn = get_connection()
     cur = conn.cursor()
 
     try:
-        # Count total candidates
-        cur.execute("SELECT COUNT(*) FROM candidates")
-        count = cur.fetchone()[0]
-        print(f"DEBUG: total candidates in DB = {count}")
-        print(f"DEBUG: where_clause = '{where_clause}'")
-
-        # Execute search
         cur.execute(sql)
         rows = cur.fetchall()
-        print(f"DEBUG: rows fetched = {len(rows)}")
-
         columns = [desc[0] for desc in cur.description]
         results = [dict(zip(columns, row)) for row in rows]
         return results
@@ -108,7 +92,6 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
     finally:
         cur.close()
         conn.close()
-
 
 # ── Step 2: Rank with Gemini — returns structured JSON ─────────────────────────
 
