@@ -79,7 +79,7 @@ def search_candidates(parsed_query: dict, top_n: int = 3) -> list[dict]:
     cur = conn.cursor()
 
     try:
-        cur.execute(sql)
+        cur.execute(sql, params)
         rows = cur.fetchall()
         columns = [desc[0] for desc in cur.description]
         results = [dict(zip(columns, row)) for row in rows]
